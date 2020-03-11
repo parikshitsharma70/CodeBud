@@ -11,7 +11,9 @@ const userSchema = new Schema({
         city : String,
         state : String,
         title : String,
-        skills : Array,
+        skills : [{
+            type: String
+        }],
         friends : [{
             type: String
         }],

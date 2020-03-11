@@ -193,6 +193,107 @@ module.exports = function(app){
             }
         })
 
+    app.post('/meetup/listRequested', [
+        check('meetupId')
+            .not()
+            .isEmpty(),
+        check('username')
+            .not()
+            .isEmpty(),
+        ], async(req, res)=>{
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(422).json({ errors: errors.array() });
+            }
+            var meetupId = req.body.meetupId
+            var username = req.body.username
+            try{
+                var meetup = await Meetup.findOne({meetupId : meetupId, owner : username}).exec()
+                if(!meetup){
+                    res.status(401).json({'message' : 'You are not the owner of this meetup'})
+                }
+                else{
+                    res.status(200).json({'message' : meetup.requested})
+                }
+
+            } catch(err){
+                console.log(err)
+                res.status(500).json({'message' : 'Server error'})
+            }
+        })
+
+    app.post('/meetup/respondRequest', [
+        check('meetupId')
+            .not()
+            .isEmpty(),
+        check('invitee')
+            .not()
+            .isEmpty(),
+        check('username')
+            .not()
+            .isEmpty(),
+        check('response')
+            .not()
+            .isEmpty(),
+        ], async(req, res)=>{
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(422).json({ errors: errors.array() });
+            }
+            var meetupId = req.body.meetupId
+            var username = req.body.username
+            var invitee = req.body.invitee
+            try{
+                var meetup = await Meetup.findOne({meetupId : meetupId, owner : username}).exec()
+                if(!meetup){
+                    res.status(401).json({'message' : 'You are not the owner of this meetup'})
+                }
+                else{
+                    var index = meetup.requested.indexOf(invitee)
+                    meetup.invited.splice(index, 1)
+                    if(response == "Yes"){
+                        meetup.going.push(invitee)
+                    }
+                    meetup.save()
+                    res.status(200).json({'message' : 'The response has been recorded'})
+                }
+            } catch(err){
+                console.log(err)
+                res.status(500).json({'message' : 'Server error'})
+            }
+        })
+
+    app.post('/meetup/requestJoin', [
+        check('meetupId')
+            .not()
+            .isEmpty(),
+        check('username')
+            .not()
+            .isEmpty(),
+        ], async(req, res)=>{
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(422).json({ errors: errors.array() });
+            }
+            var meetupId = req.body.meetupId
+            var username = req.body.username
+            try{
+                var meetup = await Meetup.findOne({meetupId : meetupId}).exec()
+                if(!meetup){
+                    res.status(401).json({'message' : 'Meetup does not exist'})
+                }
+                else{
+                    meetup.requested.push(username)
+                    meetup.save()
+                    res.status(200).json({'message' : 'Your request has been sent'})
+                }
+
+            } catch(err){
+                console.log(err)
+                res.status(500).json({'message' : 'Server error'})
+            }
+        })
+
     app.post('/meetup/respondInvitation', [
         check('meetupId')
             .not()

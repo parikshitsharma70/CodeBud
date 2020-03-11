@@ -1,8 +1,10 @@
 # CodeBud Internal API Docs
 
-All routes are protected by jwt which can be obtained from /user/login or /admin/login
+
+JWT not enabled at the moment
+<!-- All routes are protected by jwt which can be obtained from /user/login or /admin/login
 User jwt gives access to /user/* and /meetup/* endpoints
-Admin jwt gives access to /admin/* endpoints
+Admin jwt gives access to /admin/* endpoints -->
 
 
 # User
@@ -138,9 +140,39 @@ Admin jwt gives access to /admin/* endpoints
         Receive :
             Confirmation of response to invitation
 
+## - /meetup/listRequested
+    POST
+        Send :
+            - username as req.body.username
+            - meetupId as req.body.meetupId
+
+        Receive :
+            List of users requested to join
+
+## - /meetup/requestJoin
+    POST
+        Send :
+            - username as req.body.username
+            - meetupId as req.body.meetupId
+
+        Receive :
+            Confirmation of request to join meetup
+
+## - /meetup/respondRequest
+    POST
+        Send :
+            - username as req.body.username
+            - meetupId as req.body.meetupId
+            - invitee as req.body.invitee
+            - response as req.body.response (Yes/No)
+
+        Receive :
+            Confirmation of response to request
+
 # Group
 
 # ToDo
 
-## - Socket for messaging
-## - Search for users by skills, title and distance
+### - Socket for messaging
+### - Search for users by skills, title and distance
+### - Setup groups, create, add, delete
