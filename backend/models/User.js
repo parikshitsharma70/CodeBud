@@ -23,6 +23,9 @@ const userSchema = new Schema({
         requestsReceived : [{
             type: String
         }],
+        blocked : [{
+            type: String
+        }],
         role :  String,
         lastLogin : String 
     })

@@ -203,6 +203,73 @@ module.exports = function(app){
 
         })
 
+    app.post('/user/removeFriend', [
+        check('username')
+            .not()
+            .isEmpty(),
+        check('removeUsername')
+            .not()
+            .isEmpty()
+        ], async(req, res)=>{
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(422).json({ errors: errors.array() });
+            }
+            try{
+                var removeUsername = req.body.removeUsername
+                var username = req.body.username
+                var user = await User.findOne({'username' : username, 'friends':removeUsername}).exec()
+                var removeUser = await User.findOne({'username' : removeUsername, 'friends':username}).exec()
+                if(!user || !removeUser) res.status(422).json({'message' : 'User is not in your friend list'})
+                
+                removeUser.friends.splice(removeUser.friends.indexOf(username), 1)
+                removeUser.save()
+                user.friends.splice(user.friends.indexOf(removeUsername), 1)
+                user.save()
+                res.status(200).json({'message': 'User has been removed from friends'})
+            } catch(err){
+                console.log(err)
+                res.status(500).json({'message' : 'Server error'})
+            }
+
+        })
+
+    app.post('/user/blockUser', [
+        check('username')
+            .not()
+            .isEmpty(),
+        check('blockUsername')
+            .not()
+            .isEmpty()
+        ], async(req, res)=>{
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(422).json({ errors: errors.array() });
+            }
+            try{
+                var blockUsername = req.body.blockUsername
+                var username = req.body.username
+                var user = await User.findOne({'username' : username}).exec()
+                var blockUser = await User.findOne({'username' : blockUsername}).exec()
+                if(!user || !blockUser) res.status(422).json({'message' : 'User does not exist'})
+                user.blocked.push(blockUser)
+                if(user.friends.indexOf(blockUsername)>-1){
+                    user.friends.splice(user.friends.indexOf(blockUser), 1)
+                }
+                user.save()
+                
+                if(blockUser.friends.indexOf(username)>-1){
+                    blockUser.friends.splice(blockUser.friends.indexOf(username), 1)
+                    blockUser.save()
+                }
+                res.status(200).json({'message': 'User has been blocked'})
+            } catch(err){
+                console.log(err)
+                res.status(500).json({'message' : 'Server error'})
+            }
+
+        })
+
     app.post('/user/respondRequest', [
         check('username')
             .not()

@@ -77,6 +77,25 @@ Admin jwt gives access to /admin/* endpoints -->
         Receive : 
             Confirmation for response to request
 
+## - /user/removeFriend
+    POST
+        Send :
+            - username as req.body.username
+            - removeUsername as req.body.removeUsername
+
+        Receive : 
+            Confirmation for friend removed
+
+## - /user/blockUser
+    POST
+        Send :
+            - username as req.body.username
+            - blockUsername as req.body.blockUsername
+
+        Receive : 
+            Confirmation for user blocked
+
+
 # Meetup
 
 ## - /meetup/create
@@ -173,6 +192,9 @@ Admin jwt gives access to /admin/* endpoints -->
 
 # ToDo
 
+### - Add images to profile
+### - Edit user profile
+### - Delete/Edit Meetup
 ### - Socket for messaging
 ### - Search for users by skills, title and distance
 ### - Setup groups, create, add, delete
